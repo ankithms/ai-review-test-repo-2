@@ -1,0 +1,16 @@
+{
+  "name": "parcel-pilot-review-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A realistic code-review fixture for AI reviewer evaluation",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "test:watch": "node --test --watch"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
+
