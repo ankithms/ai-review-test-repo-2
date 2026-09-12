@@ -49,6 +49,21 @@ git show review-answer-key:docs/EXPECTED_FINDINGS.md
 | `GET` | `/health` | Liveness check |
 | `GET` | `/v1/orders/:id` | Fetch an order for the authenticated tenant |
 | `POST` | `/v1/orders` | Create and reserve inventory for an order |
+| `POST` | `/v1/imports/orders` | Import a batch and optionally notify a webhook |
+
+Bulk imports accept an `Idempotency-Key` header and a body shaped like this:
+
+```json
+{
+  "notifyUrl": "https://ops.example.test/import-complete",
+  "orders": [
+    {
+      "customerEmail": "buyer@example.test",
+      "lines": [{ "sku": "BOX-S", "quantity": "2", "unitPrice": "1.25" }]
+    }
+  ]
+}
+```
 
 Authentication uses a deliberately simple demo token:
 `Authorization: Bearer <tenant-id>:<role>`.
@@ -64,4 +79,3 @@ Authentication uses a deliberately simple demo token:
 
 All names, customers, and tokens are synthetic. Do not use this service in
 production.
-
