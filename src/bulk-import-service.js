@@ -65,7 +65,7 @@ export class BulkImportService {
       rejected: results.filter((result) => result.status === 'rejected').length,
       results
     };
-    this.store.saveBulkImport(idempotencyKey, response);
+    this.store.saveBulkImport(`${actor.tenantId}:${idempotencyKey}`, response);
 
     if (input.notifyUrl) {
       await this.fetchImpl(input.notifyUrl, {
