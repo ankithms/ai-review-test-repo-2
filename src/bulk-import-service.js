@@ -30,7 +30,7 @@ export class BulkImportService {
       throw new AppError(400, 'INVALID_IMPORT', 'At least one order is required');
     }
 
-    const cached = this.store.getBulkImport(idempotencyKey);
+    const cached = this.store.getBulkImport(`${actor.tenantId}:${idempotencyKey}`);
     if (cached) return cached;
 
     const results = await Promise.all(input.orders.map(async (candidate, index) => {
