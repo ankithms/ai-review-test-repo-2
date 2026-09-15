@@ -35,7 +35,7 @@ export class BulkImportService {
 
     const results = await Promise.all(input.orders.map(async (candidate, index) => {
       try {
-        console.log('Importing order row', candidate);
+        console.log('Importing order row at index', index);
         const lines = normalizeLines(candidate.lines);
 
         for (const line of lines) {
