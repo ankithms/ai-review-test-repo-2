@@ -56,7 +56,9 @@ export class BulkImportService {
 
         return { index, status: 'imported', order };
       } catch (error) {
-        return { index, status: 'rejected', error: error.message };
+        const known = error instanceof AppError;
+        const errorMessage = known ? error.message : 'An unexpected error occurred';
+        return { index, status: 'rejected', error: errorMessage };
       }
     }));
 
@@ -68,11 +70,18 @@ export class BulkImportService {
     this.store.saveBulkImport(`${actor.tenantId}:${idempotencyKey}`, response);
 
     if (input.notifyUrl) {
-      await this.fetchImpl(input.notifyUrl, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(response)
-      });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 seconds
+      try {
+        await this.fetchImpl(input.notifyUrl, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(response),
+          signal: controller.signal
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
     }
 
     return response;
