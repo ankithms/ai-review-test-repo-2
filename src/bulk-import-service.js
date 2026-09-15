@@ -95,6 +95,9 @@ export class BulkImportService {
           body: JSON.stringify(response),
           signal: controller.signal
         });
+      } catch (error) {
+        console.error('Failed to send notification:', error);
+      } finally {
       } finally {
         clearTimeout(timeoutId);
       }
