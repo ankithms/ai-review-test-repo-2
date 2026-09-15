@@ -57,8 +57,10 @@ export class BulkImportService {
         return { index, status: 'imported', order };
       } catch (error) {
         const known = error instanceof AppError;
-        const errorMessage = known ? error.message : 'An unexpected error occurred';
-        return { index, status: 'rejected', error: errorMessage };
+        // For known AppErrors, return the specific error code.
+        // For unknown errors, return a generic error code.
+        const errorIdentifier = known ? error.code : 'INTERNAL_ERROR';
+        return { index, status: 'rejected', error: errorIdentifier };
       }
     }));
 
