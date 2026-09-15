@@ -8,10 +8,11 @@ function normalizeLines(lines) {
 
   return lines.map((line) => {
     const quantity = parseInt(line.quantity, 10);
-    if (!line.sku || !Number.isInteger(quantity) || quantity <= 0) {
-      throw new AppError(400, 'INVALID_LINE', 'Each line needs a SKU and positive quantity');
+    const unitPrice = Number(line.unitPrice);
+    if (!line.sku || !Number.isInteger(quantity) || quantity <= 0 || !Number.isFinite(unitPrice) || unitPrice < 0) {
+      throw new AppError(400, 'INVALID_LINE', 'Each line needs a SKU, positive quantity, and a valid non-negative unit price');
     }
-    return { ...line, quantity };
+    return { ...line, quantity, unitPrice };
   });
 }
 
