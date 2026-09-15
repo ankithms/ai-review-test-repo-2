@@ -1,0 +1,20 @@
+{
+  "notifyUrl": "https://ops.example.test/hooks/imports",
+  "orders": [
+    {
+      "customerEmail": "alex@example.test",
+      "shippingAddress": "101 Example Street, Test City",
+      "lines": [
+        { "sku": "BOX-S", "quantity": "3", "unitPrice": "1.25" },
+        { "sku": "TAPE", "quantity": "1", "unitPrice": "3.50" }
+      ]
+    },
+    {
+      "customerEmail": "sam@example.test",
+      "shippingAddress": "202 Sample Avenue, Demo Town",
+      "lines": [
+        { "sku": "BOX-L", "quantity": "2", "unitPrice": "4.10" }
+      ]
+    }
+  ]
+}

@@ -28,7 +28,7 @@ function send(res, status, payload) {
   res.end(data);
 }
 
-export function createHandler(orderService) {
+export function createHandler(orderService, bulkImportService) {
   return async function handler(req, res) {
     try {
       const url = new URL(req.url, 'http://localhost');
@@ -50,6 +50,16 @@ export function createHandler(orderService) {
         return send(res, 201, { order });
       }
 
+      if (req.method === 'POST' && url.pathname === '/v1/imports/orders') {
+        const input = await readJson(req);
+        const result = await bulkImportService.importOrders(
+          actor,
+          input,
+          req.headers['idempotency-key']
+        );
+        return send(res, 202, result);
+      }
+
       throw new AppError(404, 'NOT_FOUND', 'Route not found');
     } catch (error) {
       const known = error instanceof AppError;
@@ -60,4 +70,3 @@ export function createHandler(orderService) {
     }
   };
 }
-
