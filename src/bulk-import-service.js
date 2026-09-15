@@ -70,10 +70,26 @@ export class BulkImportService {
     this.store.saveBulkImport(`${actor.tenantId}:${idempotencyKey}`, response);
 
     if (input.notifyUrl) {
+      let notifyUrlObject;
+      try {
+        notifyUrlObject = new URL(input.notifyUrl);
+      } catch (e) {
+        throw new AppError(400, 'INVALID_NOTIFY_URL', 'notifyUrl must be a valid URL');
+      }
+
+      if (notifyUrlObject.protocol !== 'https:') {
+        throw new AppError(400, 'INSECURE_NOTIFY_URL', 'notifyUrl must use HTTPS protocol');
+      }
+
+      const ALLOWED_WEBHOOK_HOSTS = ['ops.example.test'];
+      if (!ALLOWED_WEBHOOK_HOSTS.includes(notifyUrlObject.hostname)) {
+        throw new AppError(400, 'UNAUTHORIZED_NOTIFY_URL', 'notifyUrl hostname is not allowed');
+      }
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 seconds
       try {
-        await this.fetchImpl(input.notifyUrl, {
+        await this.fetchImpl(notifyUrlObject.toString(), {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify(response),
